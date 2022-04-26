@@ -30,13 +30,13 @@ public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeIntercept
             }
             // 使用user区分WebSocketHandler，以便定向发送消息
             HttpServletRequest req = servletRequest.getServletRequest();
-            String xShopId = req.getParameter("shopId");
-            String xAppId = req.getParameter("appId");
+            String key = req.getParameter("key");
+            String userId = req.getParameter("userId");
 
-            if (StringUtils.isEmpty(xAppId) || StringUtils.isEmpty(xShopId)) {
+            if (StringUtils.isEmpty(key) || StringUtils.isEmpty(userId)) {
                 return false;
             }
-            attributes.put("shopId", xShopId);
+            attributes.put("key", key);
             return super.beforeHandshake(request, response, wsHandler, attributes);
         }
         return false;

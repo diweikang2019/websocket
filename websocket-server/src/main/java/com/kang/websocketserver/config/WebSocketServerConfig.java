@@ -4,17 +4,14 @@ import com.kang.websocketserver.handler.WebSocketServerHandler;
 import com.kang.websocketserver.interceptor.WebSocketHandshakeInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
-import java.io.IOException;
-
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+public class WebSocketServerConfig implements WebSocketConfigurer {
 
     /**
      * 配置初始化注册通道
@@ -25,23 +22,22 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         try {
             // 注册通道
-            registry.addHandler(myHandler(), "/ws-service").setAllowedOrigins("*").addInterceptors(myInterceptor());
+            registry.addHandler(webSocketServerHandler(), "/ws-service").setAllowedOrigins("*").addInterceptors(myInterceptor());
             // withSockJS() 方法声明我们想要使用 SockJS 功能，如果WebSocket不可用的话，会使用 SockJS；
-            registry.addHandler(myHandler(), "/sockjs/ws-service").setAllowedOrigins("*").addInterceptors(myInterceptor()).withSockJS();
-        } catch (IOException e) {
+            registry.addHandler(webSocketServerHandler(), "/sockjs/ws-service").setAllowedOrigins("*").addInterceptors(myInterceptor()).withSockJS();
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("注册通道失败");
         }
     }
 
     /**
-     * 配置消息处理头
+     * 配置消息处理
      *
      * @return
-     * @throws IOException
      */
     @Bean
-    public WebSocketHandler myHandler() throws IOException {
+    public WebSocketServerHandler webSocketServerHandler() {
         return new WebSocketServerHandler();
     }
 

@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -17,7 +17,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-@Component
+// @Component // 通过 @Bean 方式注入
 public class WebSocketClientHandler extends AbstractWebSocketHandler {
 
     /**
@@ -33,14 +33,13 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
     @Autowired
     @Lazy
     @Qualifier("wsCloudConnectionManager")
-    WebSocketConnectionManager wsConnectionManager;
+    private WebSocketConnectionManager wsConnectionManager;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println("Websocket client connection established");
         this.clientSession = session;
-        System.out.println(clientSession);
-        System.out.println("获取链接之后的session");
+        System.out.println("与服务端建立连接之后的session=" + clientSession);
     }
 
     @Override
@@ -52,8 +51,8 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         if (message instanceof PongMessage) {
-            //此处验证建立链接后消息交互
-//            session.sendMessage(new PongMessage(ByteBuffer.wrap("2".getBytes())));
+            // 此处验证建立链接后消息交互
+            System.out.println("Receive pong message");
         } else if (message instanceof TextMessage) {
             System.out.println("Add message into queue");
         } else if (message instanceof BinaryMessage) {
@@ -61,7 +60,7 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
         } else {
             throw new Exception("Error format");
         }
-        System.out.println("接受消息ID =================   " + session.getId());
+        System.out.println("接受消息ID ===============   " + session.getId());
         System.out.println("接收到的消息===============   " + message);
     }
 
@@ -70,6 +69,25 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
         exception.printStackTrace();
         if (session.isOpen()) {
             session.close();
+        }
+    }
+
+    /**
+     * 发送消息，如果连接断开，缓存到数据库
+     *
+     * @param content 发送内容
+     */
+    public void sendMessage(String content) {
+        System.out.println("send content >>> " + content);
+        if (isConnected()) {
+            try {
+                this.clientSession.sendMessage(new TextMessage(content));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Connection closed ");
+            System.out.println("Connection interrupt ");
         }
     }
 
@@ -83,27 +101,7 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
     }
 
     /**
-     * 发送消息,如果连接断开，缓存到数据库
-     *
-     * @param content 发送内容
-     */
-    public void sendMessage(String content) {
-        System.out.println("send content >>> " + content);
-        if (isConnected()) {
-            try {
-                this.clientSession.sendMessage(new TextMessage(content));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // cache
-            System.out.println("Connection closed ");
-            System.out.println("Connection interrupt ");
-        }
-    }
-
-    /**
-     * 每30秒发送一个心跳,检测断开后重连
+     * 每30秒发送一个心跳，检测断开后重连
      */
     @Scheduled(cron = "${websocket.pong.schedule.cron}")
     public void heartBeat() {
@@ -111,7 +109,7 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
         System.out.println(isConnected());
         try {
             if (isConnected()) {
-                this.clientSession.sendMessage(new PongMessage(ByteBuffer.wrap("1".getBytes())));
+                this.clientSession.sendMessage(new PingMessage(ByteBuffer.wrap("1".getBytes())));
             } else {
                 System.out.println("Send Ping Message fail, not connect ");
                 System.out.println("try " + currentConnectionTimes + " times, connection fail, reconnecting");

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @Autowired
-    WebSocketServerHandler webSocketServerHandler;
+    private WebSocketServerHandler webSocketServerHandler;
 
     @GetMapping(value = "/sendMessage")
     public String sendMessage() {

@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @Autowired
-    WebSocketClientHandler webSocketClientHandler;
+    private WebSocketClientHandler webSocketClientHandler;
 
     @GetMapping(value = "/sendMessage")
     public String sendMessage() {
-        webSocketClientHandler.sendMessage("测试消息发送");
+        webSocketClientHandler.sendMessage("测试客户端消息发送");
         return null;
     }
 

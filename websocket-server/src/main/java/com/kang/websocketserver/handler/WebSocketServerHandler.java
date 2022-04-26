@@ -12,26 +12,30 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author weikang.di
+ * @date 2022/4/26 5:05 PM
+ */
 // @Component // 通过 @Bean 方式注入
 public class WebSocketServerHandler extends AbstractWebSocketHandler {
 
-    private final static Map<String, WebSocketSession> sessions = new ConcurrentHashMap<String, WebSocketSession>();
+    private final static Map<String, WebSocketSession> SESSIONS = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println(session.getAttributes());
         String key = session.getAttributes().get("key").toString();
         System.out.println("key=" + key);
-        if (sessions.containsKey(key)) {
-            WebSocketSession oldSession = sessions.get(key);
+        if (SESSIONS.containsKey(key)) {
+            WebSocketSession oldSession = SESSIONS.get(key);
             if (oldSession.isOpen()) {
                 oldSession.close(CloseStatus.SERVICE_RESTARTED);
             }
-            sessions.remove(key);
+            SESSIONS.remove(key);
             System.out.println("closed old connection and save new connection[" + key + "]");
         }
         System.out.println("new connection [" + key + "] successfully");
-        sessions.put(key, session);
+        SESSIONS.put(key, session);
         System.out.println("连接开启");
     }
 
@@ -40,7 +44,7 @@ public class WebSocketServerHandler extends AbstractWebSocketHandler {
         String key = session.getAttributes().get("key").toString();
         System.out.println("key=" + key);
         System.out.println("Closed code {" + closeStatus.getCode() + "}, reason {" + closeStatus.getReason() + "}");
-        sessions.remove(key);
+        SESSIONS.remove(key);
         System.out.println("连接关闭");
     }
 
@@ -90,7 +94,7 @@ public class WebSocketServerHandler extends AbstractWebSocketHandler {
         System.out.println("send content>>> " + content);
         if (isConnected(key)) {
             try {
-                sessions.get(key).sendMessage(new TextMessage(content));
+                SESSIONS.get(key).sendMessage(new TextMessage(content));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -106,8 +110,8 @@ public class WebSocketServerHandler extends AbstractWebSocketHandler {
      * @return
      */
     public static boolean isConnected(String key) {
-        if (sessions.containsKey(key)) {
-            WebSocketSession session = sessions.get(key);
+        if (SESSIONS.containsKey(key)) {
+            WebSocketSession session = SESSIONS.get(key);
             if (null != session && session.isOpen()) {
                 return true;
             }

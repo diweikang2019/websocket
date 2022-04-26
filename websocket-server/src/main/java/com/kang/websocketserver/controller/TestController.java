@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author weikang.di
+ * @date 2022/4/26 5:05 PM
+ */
 @RestController
 @RequestMapping(value = "/api/server", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class TestController {

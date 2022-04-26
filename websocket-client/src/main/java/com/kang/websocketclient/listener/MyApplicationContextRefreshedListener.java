@@ -9,7 +9,8 @@ import javax.servlet.annotation.WebListener;
 /**
  * spring容器初始化监听，初始化完成后执行websocket连接
  *
- * @author kesq
+ * @author weikang.di
+ * @date 2022/4/26 5:05 PM
  */
 @WebListener
 @Component

@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -16,6 +15,10 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * @author weikang.di
+ * @date 2022/4/26 5:05 PM
+ */
 // @Component // 通过 @Bean 方式注入
 public class WebSocketClientHandler extends AbstractWebSocketHandler {
 
@@ -107,7 +110,7 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
      * @return
      */
     public Boolean isConnected() {
-        return (null != this.clientSession && this.clientSession.isOpen()) ? true : false;
+        return null != this.clientSession && this.clientSession.isOpen();
     }
 
     /**

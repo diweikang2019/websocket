@@ -9,6 +9,10 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
+/**
+ * @author weikang.di
+ * @date 2022/4/26 5:05 PM
+ */
 @Configuration
 @EnableWebSocket
 public class WebSocketServerConfig implements WebSocketConfigurer {

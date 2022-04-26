@@ -2,10 +2,8 @@ package com.kang.websocketserver.handler;
 
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
@@ -47,20 +45,31 @@ public class WebSocketServerHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        System.out.println("接收到来自客户端的消息");
-        if (message instanceof PingMessage) {
-            System.out.println("Receive ping message, send pong message");
-            session.sendMessage(new PongMessage(ByteBuffer.wrap("2".getBytes())));
-        } else if (message instanceof TextMessage) {
-            System.out.println("Add message into queue");
-        } else if (message instanceof BinaryMessage) {
-            System.out.println("Receive binary message");
-        } else {
-            throw new Exception("Error format");
-        }
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        System.out.println("Receive text message, add message into queue");
+
         System.out.println("接受消息ID ===============   " + session.getId());
         System.out.println("接收到的消息===============   " + message);
+        super.handleTextMessage(session, message);
+    }
+
+    @Override
+    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+        System.out.println("Receive binary message");
+
+        System.out.println("接受消息ID ===============   " + session.getId());
+        System.out.println("接收到的消息===============   " + message);
+        super.handleBinaryMessage(session, message);
+    }
+
+    @Override
+    protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
+        System.out.println("Receive pong message, send pong message");
+        session.sendMessage(new PongMessage(ByteBuffer.wrap("2".getBytes())));
+
+        System.out.println("接受消息ID ===============   " + session.getId());
+        System.out.println("接收到的消息===============   " + message);
+        super.handlePongMessage(session, message);
     }
 
     @Override

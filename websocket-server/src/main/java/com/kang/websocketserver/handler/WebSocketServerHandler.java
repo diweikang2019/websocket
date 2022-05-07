@@ -23,7 +23,7 @@ public class WebSocketServerHandler extends AbstractWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println(session.getAttributes());
+        System.out.println(session);
         String key = session.getAttributes().get("key").toString();
         System.out.println("key=" + key);
         if (SESSIONS.containsKey(key)) {
@@ -41,6 +41,7 @@ public class WebSocketServerHandler extends AbstractWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+        System.out.println(session);
         String key = session.getAttributes().get("key").toString();
         System.out.println("key=" + key);
         System.out.println("Closed code {" + closeStatus.getCode() + "}, reason {" + closeStatus.getReason() + "}");
@@ -50,6 +51,7 @@ public class WebSocketServerHandler extends AbstractWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        System.out.println(session);
         System.out.println("Receive text message, add message into queue");
 
         System.out.println("接受消息ID ===============   " + session.getId());

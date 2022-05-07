@@ -52,6 +52,7 @@ public class WebSocketClientHandler extends AbstractWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        System.out.println(session);
         System.out.println("Receive text message, add message into queue");
 
         System.out.println("接受消息ID ===============   " + session.getId());

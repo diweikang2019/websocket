@@ -15,6 +15,9 @@ public class WebSocketClientConfig {
 
     /**
      * 定义websocket配置
+     * 启动一个websocket连接到预配置的url时可以考虑使用WebSocketConnectionManager。
+     * WebSocketConnectionManager在指定uri，WebsocketClient和websocketHandler时通过start()和stop()方法连接到websocket服务器。
+     * 如果setAutoStartup(boolean)设置为true，spring ApplicationContext刷新时会自动连接。
      *
      * @return
      */

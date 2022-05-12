@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  * @date 2022/4/26 5:05 PM
  */
 @Configuration
-public class ThredPoolConfig {
+public class ThreadPoolConfig {
 
     @Bean
     public ScheduledThreadPoolExecutor scheduledExecutorService() {
